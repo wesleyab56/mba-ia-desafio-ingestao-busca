@@ -1,4 +1,22 @@
 services:
+  app:
+    build: .
+    container_name: app
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/rag
+      PG_VECTOR_COLLECTION_NAME: pdf_documents
+      PDF_PATH: /app/document.pdf
+    volumes:
+      - .:/app
+    depends_on:
+      bootstrap_vector_ext:
+        condition: service_completed_successfully
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
   postgres:
     image: pgvector/pgvector:pg17
     container_name: postgres_rag
